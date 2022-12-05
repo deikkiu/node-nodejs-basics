@@ -1,13 +1,14 @@
 import fs from "fs";
-import process from "process";
+import { stdout } from "process";
 
 const read = async () => {
   // Write your code here
   const path = "node-nodejs-basics/src/streams/files/fileToRead.txt";
-  const readable = fs.createReadStream(path, { highWaterMark: 9 });
+  const readable = fs.createReadStream(path);
 
-  readable.on("data", (chunk) => {
-    console.log(String(chunk));
+  readable.pipe(stdout);
+  readable.on("end", () => {
+    stdout.end("\n");
   });
 };
 
