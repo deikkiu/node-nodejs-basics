@@ -1,23 +1,19 @@
-import fs from "fs";
+import { access, rename as renameFile } from "fs/promises";
+import { FILES_PATH, ERROR_MSG } from "./constants.js";
+import { getAbsoluteUrl } from "./utils.js";
+
+const ORIGINAL_FILE_NAME = "wrongFilename.txt";
+const NEW_FILE_NAME = "properFilename.md";
+const originalFileUrl = getAbsoluteUrl(`${FILES_PATH}/${ORIGINAL_FILE_NAME}`);
+const newFileUrl = getAbsoluteUrl(`${FILES_PATH}/${NEW_FILE_NAME}`);
 
 const rename = async () => {
   // Write your code here
-  let filePath = "node-nodejs-basics/src/fs/files";
-
-  fs.access(filePath, (err) => {
-    if (err) throw new Error("FS operation failed");
-    else {
-      fs.rename(
-        `${filePath}/wrongFilename.txt`,
-        `${filePath}/properFilename.md`,
-        (err) => {
-          if (err) throw new Error("FS operation failed");
-
-          console.log("File was renamed");
-        }
-      );
-    }
-  });
+  if (await access(originalFileUrl)) {
+    throw new Error(ERROR_MSG);
+  } else {
+    await renameFile(originalFileUrl, newFileUrl);
+  }
 };
 
 await rename();

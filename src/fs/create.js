@@ -1,24 +1,19 @@
-import fs from "fs";
+import { writeFile } from "fs/promises";
+import { FILES_PATH, ERROR_MSG } from "./constants.js";
+import { getAbsoluteUrl } from "./utils.js";
+
+const FILE_NAME = "fresh.txt";
+const CONTENT = "I am fresh and young";
+const url = getAbsoluteUrl(`${FILES_PATH}/${FILE_NAME}`);
 
 const create = async () => {
   // Write your code here
-  const path = "node-nodejs-basics/src/fs/files/fresh.txt";
-
-  fs.access(path, fs.F_OK, (err) => {
-    if (!err) {
-      throw new Error("FS operation failed");
-    } else {
-      fs.open(path, "w", (err) => {
-        if (err) throw err;
-
-        fs.writeFile(path, "I am fresh and young", "utf8", (err) => {
-          if (err) throw err;
-
-          console.log("File created");
-        });
-      });
-    }
-  });
+  try {
+    await writeFile(url, CONTENT, { flag: "wx" });
+  } catch (err) {
+    console.log(err);
+    throw new Error(ERROR_MSG);
+  }
 };
 
 await create();
