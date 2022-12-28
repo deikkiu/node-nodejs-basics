@@ -1,13 +1,21 @@
-import { argv } from "process";
+const PREFIX = "--";
 
 const parseArgs = () => {
   // Write your code here
-  const argument = argv.reduce((acc, el, i, arr) => {
-    if (el.startsWith("--")) return [...acc, `${el.slice(2)} is ${arr[i + 1]}`];
-    else return acc;
+
+  const argument = process.argv.slice(2).reduce((acc, value, index, array) => {
+    if (value.startsWith(PREFIX)) {
+      const formattedProp = `${value.replace(PREFIX, "")} is ${
+        array[index + 1]
+      }`;
+      return [...acc, formattedProp];
+    }
+    return acc;
   }, []);
 
-  console.log(argument);
+  const stringifiedArgument = argument.join(", ");
+
+  console.log(stringifiedArgument);
 };
 
 parseArgs();

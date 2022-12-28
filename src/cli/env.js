@@ -1,20 +1,23 @@
-import { env } from "process";
+const PREFIX = "RSS_";
 
 const parseEnv = () => {
   // Write your code here
-  const pref = "RSS_";
-  const rssInclude = Object.entries(env);
 
-  rssInclude
-    .filter((el) => {
-      el[0].includes(pref);
-    })
-    .map((el) => {
-      el.join("=");
-    })
-    .join(";");
+  const rssValiables = Object.entries(process.env).reduce(
+    (acc, [key, value]) => {
+      if (key.startsWith(PREFIX)) {
+        const formattedProp = `${key}=${value}`;
+        return [...acc, formattedProp];
+      }
 
-  console.log(rssInclude);
+      return acc;
+    },
+    []
+  );
+
+  const stringifiedArgument = rssValiables.join(", ");
+
+  console.log(stringifiedArgument);
 };
 
 parseEnv();
