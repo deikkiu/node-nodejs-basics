@@ -9,8 +9,8 @@ const newFileUrl = getAbsoluteUrl(`${FILES_PATH}/${NEW_FILE_NAME}`);
 
 const rename = async () => {
   // Write your code here
-  if (await access(originalFileUrl)) {
-    throw new Error(ERROR_MSG);
+  if (await access(newFileUrl)) {
+    throw Error(ERROR_MSG);
   } else {
     await renameFile(originalFileUrl, newFileUrl);
   }

@@ -1,19 +1,16 @@
-import fs from "fs";
+import { access, readdir } from "fs/promises";
+import { FILES_PATH, ERROR_MSG } from "./constants.js";
+import { getAbsoluteUrl } from "./utils.js";
+
+const folderUrl = getAbsoluteUrl(FILES_PATH);
 
 const list = async () => {
-  // Write your code here
-  const filePath = "node-nodejs-basics/src/fs/files";
-
-  fs.access(filePath, (err) => {
-    if (err) throw new Error("FS operation failed");
-    else {
-      fs.readdir(filePath, "utf-8", (err, data) => {
-        if (err) throw err;
-
-        console.log(data);
-      });
-    }
-  });
+  try {
+    const dirContent = await readdir(folderUrl);
+    console.log(dirContent);
+  } catch {
+    throw Error(ERROR_MSG);
+  }
 };
 
 await list();

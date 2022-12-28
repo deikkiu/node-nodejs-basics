@@ -1,35 +1,29 @@
-import fs from "fs";
+import { readdir, copyFile, mkdir, access } from "fs/promises";
+import { getAbsoluteUrl } from "./utils.js";
+import { ERROR_MSG, FILES_PATH } from "./constants.js";
+
+const COPY_FOLDER_PATH = "files_copy";
+const originalFolderUrl = getAbsoluteUrl(FILES_PATH);
+const copyFolderUrl = getAbsoluteUrl(COPY_FOLDER_PATH);
 
 const copy = async () => {
   // Write your code here
-  const path = "node-nodejs-basics/src/fs";
+  if (await access(originalFolderUrl)) {
+    throw Error(ERROR_MSG);
+  } else {
+    const [files] = await Promise.all([
+      readdir(originalFolderUrl),
+      mkdir(copyFolderUrl),
+    ]);
+    const promises = files.map((fileName) =>
+      copyFile(
+        getAbsoluteUrl(`${FILES_PATH}/${fileName}`),
+        getAbsoluteUrl(`${COPY_FOLDER_PATH}/${fileName}`)
+      )
+    );
 
-  fs.access(`${path}/files_copy`, fs.constants.F_OK, (err) => {
-    if (!err) throw new Error("FS operation failed");
-    else {
-      fs.mkdir(`${path}/files_copy`, { recursive: true }, (err) => {
-        if (err) throw err;
-
-        console.log("The folder was created");
-      });
-    }
-  });
-
-  fs.access(`${path}/files`, fs.constants.F_OK, (err) => {
-    if (err) throw new Error("FS operation failed");
-    else {
-      fs.cp(
-        `${path}/files`,
-        `${path}/files_copy`,
-        { recursive: true },
-        (err) => {
-          if (!err) console.error("Error");
-
-          console.log("The copy was completed");
-        }
-      );
-    }
-  });
+    await Promise.all(promises);
+  }
 };
 
 await copy();
