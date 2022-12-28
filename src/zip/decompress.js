@@ -1,14 +1,14 @@
-import zlib from "zlib";
-import fs from "fs";
+import { pipeline } from "stream/promises";
+import { createGzip } from "zlib";
+import { createReadStream, createWriteStream } from "fs";
+import { fileCompressUrl, filearchiveUrl } from "./constants";
 
 const decompress = async () => {
-  // Write your code here
-  const path = "node-nodejs-basics/src/zip/files";
-  const gunzip = zlib.createGunzip();
-  const inpt = fs.createReadStream(`${path}/archive.gz`);
-  const out = fs.createWriteStream(`${path}/fileToCompress.txt`);
-
-  inpt.pipe(gunzip).pipe(out);
+  await pipeline(
+    createReadStream(filearchiveUrl),
+    createGunzip(),
+    createWriteStream(fileCompressUrl)
+  );
 };
 
 await decompress();
