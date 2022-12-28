@@ -1,20 +1,17 @@
 import path from "path";
 import { release, version } from "os";
 import { createServer as createServerHttp } from "http";
-import("./files/c.js");
-import Template1 from "./files/a.json" assert { type: "json" };
-import Template2 from "./files/b.json" assert { type: "json" };
 import { fileURLToPath } from "url";
-import { dirname } from "path";
+
+import "./files/c.js";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = path.dirname(__filename);
 
-const random = Math.random();
-
-let unknownObject;
-
-random > 0.5 ? (unknownObject = Template1) : (unknownObject = Template2);
+const unknownObject =
+  Math.random() > 0.5
+    ? await import("./files/a.json")
+    : await import("./files/b.json");
 
 console.log(unknownObject);
 
@@ -36,5 +33,4 @@ myServer.listen(PORT, () => {
   console.log("To terminate it, use Ctrl+C combination");
 });
 
-export { unknownObject };
-export { myServer };
+export { unknownObject, myServer };
