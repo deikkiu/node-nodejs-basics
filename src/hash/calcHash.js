@@ -1,17 +1,15 @@
-import fs from "fs";
-import crypto from "crypto";
+import { readFile } from "fs/promises";
+import { createHash } from "crypto";
+
+const FILE_PATH = "./files/fileToCalculateHashFor.txt";
+const fileUrl = new URL(FILE_PATH, import.meta.url);
 
 const calculateHash = async () => {
-  // Write your code here
-  const path = "node-nodejs-basics/src/hash/files/fileToCalculateHashFor.txt";
+  const content = await readFile(fileUrl);
+  const data = createHash("sha256").update(content);
+  const encoding = data.digest("hex");
 
-  fs.readFile(path, "utf-8", (err, data) => {
-    if (err) throw err;
-
-    const hash = crypto.createHash("sha256").update(data).digest("hex");
-
-    console.log(hash);
-  });
+  console.log(encoding);
 };
 
 await calculateHash();
