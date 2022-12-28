@@ -1,15 +1,11 @@
-import fs from "fs";
-import { stdout } from "process";
+import { createReadStream } from "fs";
+import { pipeline } from "stream/promises";
+
+const FILE_PATH = "./files/fileToRead.txt";
+const fileUrl = new URL(FILE_PATH, import.meta.url);
 
 const read = async () => {
-  // Write your code here
-  const path = "node-nodejs-basics/src/streams/files/fileToRead.txt";
-  const readable = fs.createReadStream(path);
-
-  readable.pipe(stdout);
-  readable.on("end", () => {
-    stdout.end("\n");
-  });
+  await pipeline(createReadStream(fileUrl), process.stdout);
 };
 
 await read();

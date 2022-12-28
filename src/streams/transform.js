@@ -1,15 +1,16 @@
-import { stdin, stdout } from "process";
 import { Transform } from "stream";
+import { pipeline } from "stream/promises";
 
 const transform = async () => {
-  // Write your code here
-  const transform = new Transform({
+  const reverseString = (str) => str.split("").reverse().join("");
+
+  const transformStream = new Transform({
     transform(chunk, encoding, callback) {
-      callback(null, String(chunk).replace(" ", ""));
+      callback(null, reverseString(chunk.toString()));
     },
   });
 
-  stdin.pipe(transform).pipe(stdout);
+  await pipeline(process.stdin, transformStream, process.stdout);
 };
 
 await transform();
