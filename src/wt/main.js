@@ -2,30 +2,29 @@ import { Worker } from "worker_threads";
 import { cpus } from "os";
 
 const performCalculations = async () => {
-  // Write your code here
-  const path = "node-nodejs-basics/src/wt/worker.js";
-  const worker = new Array(cpus().length).fill();
+  const START_NUMBER = 10;
+  const STATUS_RESOLVED = "resolved";
+  const STATUS_ERROR = "error";
+  const WORKER_PATH = "./worker.js";
+  const workerUrl = new URL(WORKER_PATH, import.meta.url);
 
-  worker.map((acc, i) => {
-    new Worker(path), { workerData: i + 10 };
-  });
+  const calculateNthFibonacci = (workerData) =>
+    new Promise((resolve) => {
+      const worker = new Worker(workerUrl, { workerData });
 
-  const workersRes = await Promise.allSettled(
-    worker.map(
-      (worker) =>
-        new Promise((resolve, reject) => {
-          worker.on("message", (data) => {
-            resolve({ status: "resolved", data });
-          });
+      worker.on("message", (data) =>
+        resolve({ status: STATUS_RESOLVED, data })
+      );
 
-          worker.on("error", () => {
-            reject({ status: "error", data: null });
-          });
-        })
-    )
-  );
+      worker.on("error", () => resolve({ status: STATUS_ERROR, data: null }));
+    });
 
-  console.log(workersRes);
+  const calculate = new Array(cpus().length)
+    .fill(null)
+    .map((value, index) => calculateNthFibonacci(index + START_NUMBER));
+  const data = await Promise.all(calculate);
+
+  console.log(data);
 };
 
 await performCalculations();
